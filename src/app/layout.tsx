@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'JobTrack',
+  title: 'Trackify',
   description: 'Track your job applications with ease.',
 };
 

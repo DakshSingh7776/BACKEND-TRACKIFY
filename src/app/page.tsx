@@ -13,7 +13,7 @@ export default function LandingPage() {
               <div className="flex items-center gap-4 mb-8">
                 <Briefcase className="h-12 w-12 text-primary" />
                 <h1 className="text-4xl font-bold tracking-tighter text-foreground">
-                  JobTrack
+                  Trackify
                 </h1>
               </div>
 

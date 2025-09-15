@@ -1,9 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
-import { Oswald } from 'next/font/google';
-
-const oswald = Oswald({ subsets: ['latin'], weight: ['400', '700'] });
 
 export const metadata: Metadata = {
   title: 'JobTrack',
@@ -17,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className={`${oswald.className} antialiased h-full bg-background`}>
+      <body className="antialiased h-full bg-background">
           <main>{children}</main>
           <Toaster />
       </body>

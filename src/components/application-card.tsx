@@ -1,6 +1,6 @@
 'use client';
 
-import type { Application, ApplicationStatus } from '@/lib/types';
+import type { Application, ApplicationStatus, NewsArticle } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,6 +21,7 @@ import {
   FileText,
   Link as LinkIcon,
   Loader2,
+  Newspaper,
   Sparkles,
   Users,
   XCircle,
@@ -29,7 +30,10 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { summarizeApplicationAction } from '@/lib/actions';
+import { getCompanyNewsAction, summarizeApplicationAction } from '@/lib/actions';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { NewsArticleCard } from './news-article-card';
 
 const statusIcons: Record<ApplicationStatus, React.ReactNode> = {
   applied: <FileText className="h-4 w-4" />,
@@ -51,6 +55,10 @@ export function ApplicationCard({ application }: { application: Application }) {
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const [isSummaryDialogOpen, setIsSummaryDialogOpen] = useState(false);
 
+  const [news, setNews] = useState<NewsArticle[]>([]);
+  const [isNewsLoading, setIsNewsLoading] = useState(false);
+  const [isNewsDialogOpen, setIsNewsDialogOpen] = useState(false);
+
   const handleSummarize = async () => {
     setIsSummaryLoading(true);
     try {
@@ -71,6 +79,30 @@ export function ApplicationCard({ application }: { application: Application }) {
       });
     } finally {
       setIsSummaryLoading(false);
+    }
+  };
+
+  const handleGetNews = async () => {
+    setIsNewsLoading(true);
+    try {
+      const result = await getCompanyNewsAction(application.company);
+      if (result && result.length > 0) {
+        setNews(result);
+        setIsNewsDialogOpen(true);
+      } else {
+        toast({
+          title: 'No News Found',
+          description: `Could not find any recent news for ${application.company}.`,
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to fetch company news. Please check your API key and try again.',
+      });
+    } finally {
+      setIsNewsLoading(false);
     }
   };
 
@@ -103,12 +135,20 @@ export function ApplicationCard({ application }: { application: Application }) {
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="grid grid-cols-3 gap-2">
           <Button variant="outline" size="sm" asChild>
             <Link href={application.linkToJobPosting} target="_blank" rel="noopener noreferrer">
               <LinkIcon className="mr-2 h-4 w-4" />
               Job Post
             </Link>
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleGetNews} disabled={isNewsLoading}>
+            {isNewsLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Newspaper className="mr-2 h-4 w-4" />
+            )}
+            News
           </Button>
           <Button variant="ghost" size="sm" onClick={handleSummarize} disabled={isSummaryLoading}>
             {isSummaryLoading ? (
@@ -139,6 +179,24 @@ export function ApplicationCard({ application }: { application: Application }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={isNewsDialogOpen} onOpenChange={setIsNewsDialogOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="font-headline flex items-center gap-2">
+              <Newspaper className="h-5 w-5 text-primary" />
+              Recent News for {application.company}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[70vh] pr-6">
+            <div className="space-y-4 py-4">
+              {news.map((article, index) => (
+                <NewsArticleCard key={index} article={article} />
+              ))}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

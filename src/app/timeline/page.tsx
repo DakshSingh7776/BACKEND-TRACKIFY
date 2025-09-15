@@ -22,7 +22,9 @@ export default function TimelinePage() {
   const events: TimelineEvent[] = [];
 
   initialApplications.forEach((app) => {
-    events.push({ date: app.dateApplied, type: 'applied', application: app });
+    if (app.dateApplied) {
+      events.push({ date: app.dateApplied, type: 'applied', application: app });
+    }
     if (app.interviewDate) {
       events.push({ date: app.interviewDate, type: 'interviewed', application: app });
     }

@@ -16,6 +16,7 @@ const navLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/timeline', label: 'Timeline' },
   { href: '/job-boards', label: 'Job Boards' },
+  { href: '/news', label: 'News' },
 ];
 
 export default function Header() {

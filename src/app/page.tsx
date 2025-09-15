@@ -45,14 +45,6 @@ export default function LandingPage() {
               className="bg-background"
               data-ai-hint="job search"
             />
-             <div className="absolute bottom-8 right-8 z-20 text-primary-foreground">
-                <p className="font-semibold text-sm">SCROLL TO NAVIGATE</p>
-                <div className="flex items-center gap-2 mt-2">
-                    <div className="w-2 h-2 rounded-full border-2 border-primary-foreground"></div>
-                    <div className="w-2 h-2 rounded-full bg-primary-foreground"></div>
-                    <div className="w-2 h-2 rounded-full border-2 border-primary-foreground"></div>
-                </div>
-            </div>
           </div>
         </div>
       </div>
